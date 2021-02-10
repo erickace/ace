@@ -5,16 +5,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HeaderComponent } from './plantillas/header/header.component';
 import { FooterComponent } from './plantillas/footer/footer.component';
-import { LoginComponent } from './vistas/login/login.component';
-import { DashboardComponent } from './vistas/dashboard/dashboard.component';
+import { routingComponents }  from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    LoginComponent,
-    DashboardComponent
+    routingComponents
   ],
   imports: [
     BrowserModule,
