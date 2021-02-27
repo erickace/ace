@@ -7,16 +7,50 @@ import { HeaderComponent } from './plantillas/header/header.component';
 import { FooterComponent } from './plantillas/footer/footer.component';
 import { routingComponents }  from './app-routing.module';
 
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { DataTablesModule } from 'angular-datatables';
+import { HttpClientModule } from '@angular/common/http';
+import { DashboardcouchComponent } from './vistas/dashboardcouch/dashboardcouch.component';
+import { MiperfilComponent } from './vistas/miperfil/miperfil.component';
+import { AtletasComponent } from './vistas/atletas/atletas.component';
+import { MisatletasComponent } from './vistas/misatletas/misatletas.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatButtonModule } from '@angular/material/button';
+import { RcatletacouchComponent } from './vistas/rcatletacouch/rcatletacouch.component';
+import { TcatletacouchComponent } from './vistas/tcatletacouch/tcatletacouch.component';
+import { OsatletacouchComponent } from './vistas/osatletacouch/osatletacouch.component';
+import { DashatletacouchComponent } from './vistas/dashatletacouch/dashatletacouch.component';
+import { RitmocouchComponent } from './vistas/ritmocouch/ritmocouch.component';
+import { TemperaturacouchComponent } from './vistas/temperaturacouch/temperaturacouch.component';
+import { OxigenocouchComponent } from './vistas/oxigenocouch/oxigenocouch.component';
+
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
     FooterComponent,
-    routingComponents
+    routingComponents,
+    DashboardcouchComponent,
+    MiperfilComponent,
+    AtletasComponent,
+    MisatletasComponent,
+    RcatletacouchComponent,
+    TcatletacouchComponent,
+    OsatletacouchComponent,
+    DashatletacouchComponent,
+    RitmocouchComponent,
+    TemperaturacouchComponent,
+    OxigenocouchComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    ReactiveFormsModule, 
+    FormsModule,
+    HttpClientModule,
+    DataTablesModule,
+    BrowserAnimationsModule,
+    MatButtonModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,23 @@
+.sincolor {
+    color: transparent !important;
+}
+
+.btn-warning:hover > .sincolor {
+    color: transparent !important;
+}
+
+.sincolor:hover {
+    color:transparent !important;
+}
+
+.reseteo {
+    border: 1px solid !important;
+}
+
+.msjvaciologin{
+    font-size: 10px;
+    width: 285px;
+    padding-left: 16px;
+    color: navy;
+    
+  }

@@ -1,11 +1,13 @@
-const sign_in_btn = document.querySelector("#sign-in-btn");
-const sign_up_btn = document.querySelector("#sign-up-btn");
-const container = document.querySelector(".container");
-
-sign_up_btn.addEventListener("click", () => {
-  container.classList.add("sign-up-mode");
+$(function() {
+  //$("#carcteristicas").mask("99.99 m / 999.99 kg");
+  //$.mask.definitions['h'] = "[Aa-Zz]+";
+  //$("#nom_ape").mask("h / a*");
 });
 
-sign_in_btn.addEventListener("click", () => {
-  container.classList.remove("sign-up-mode");
-});
+function movimiento(){
+  $('#demo3').jrumble({
+    x: 4,
+    y: 0,
+    rotation: 0
+  });
+}
