@@ -131,7 +131,7 @@ export class RitmocouchComponent implements OnInit {
     };
 
     var myLineChart = new Chart('canvas', this.config);
-    this.enviaData();
+    //this.enviaData();
 
     const objectVar_ = {
       id_usuario: localStorage.getItem('idCouch'),
@@ -318,6 +318,33 @@ export class RitmocouchComponent implements OnInit {
         this.inscripcion = this.iAtleta[0].fecha_creacion.split("T", 1)[0];
       }
     });
+  }
+
+   //traslados de paginas
+   onDashboard() {
+    this.router.navigate(['dashboardcouch']);
+  }
+
+  onMisAtletas() {
+    this.router.navigate(['misatletas']);
+  }
+
+  onAtletas() {
+    this.router.navigate(['atletas']);
+  }
+
+  onMiPerfil() {
+    this.router.navigate(['miperfil']);
+  }
+
+  onCerrarSesion() {
+    localStorage.removeItem('username');
+    localStorage.removeItem('es_entrenador');
+    this.router.navigate(['login']);
+  }
+
+  onContacto() {
+
   }
 
 }

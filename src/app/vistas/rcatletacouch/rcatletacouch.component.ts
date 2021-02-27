@@ -165,7 +165,7 @@ export class RcatletacouchComponent implements OnInit {
     });*/
 
 
-    this.enviaData();
+    //this.enviaData();
 
     const objectVar_ = {
       id_usuario: localStorage.getItem('idAtleta'),

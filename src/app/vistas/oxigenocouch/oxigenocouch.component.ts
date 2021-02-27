@@ -132,7 +132,7 @@ export class OxigenocouchComponent implements OnInit {
     };
     var myLineChart = new Chart('canvas', this.config);
 
-    this.enviaData();
+    //this.enviaData();
 
     const objectVar_ = {
       id_usuario: localStorage.getItem('idCouch'),
