@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { LoginI } from '../../modelos/login.interface';
-import { ListaUsuariosI, ListaUsuariosII, ListaUsuariosIII, EnvioDeDataAssignAtletaACouch,infoAtleta,enviarDataRC,enviarDataRCGET,histo } from '../../modelos/listausuarios.interface';
-import { ResponseI, ResponseIIII, DatosUser,ResponseDataRC } from '../../modelos/response.interface';
+import { ListaUsuariosI, ListaUsuariosII, ListaUsuariosIII, EnvioDeDataAssignAtletaACouch,infoAtleta,enviarDataRC,enviarDataRCGET,histo,resgistro } from '../../modelos/listausuarios.interface';
+import { ResponseI, ResponseIIII, DatosUser,ResponseDataRC,TempMinMax } from '../../modelos/response.interface';
 import { InfoUser } from '../../modelos/response.interface';
 import { InfoUserCaracterisitica } from '../../modelos/response.interface';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -184,4 +184,30 @@ export class ApiService {
     return this.http.post<histo[]>(direccion, objectVar);
   }
 
+
+  /**
+   * API POST
+   * @param form 
+   * utilizada para asignarle un atleta al couch {id_usuario: id_usuario, id_medicion: id_medicion, valor: valor}
+   */
+  historialUnico(data:enviarDataRCGET):Observable<ResponseDataRC[]>{
+    let direccion = this.url_ + "/historiala";
+    return this.http.post<ResponseDataRC[]>(direccion,data);
+  }
+
+  /**
+   * API POST
+   * @param form 
+   * utilizada para dar temperatura maxima y minima
+   */
+  minmax(id:number):Observable<TempMinMax[]>{
+    const objectVar = {id_usuario: id};
+    let direccion = this.url_ + "/minmax";
+    return this.http.post<TempMinMax[]>(direccion,objectVar);
+  }
+
+  registroDeUsers(data:resgistro):Observable<TempMinMax[]>{
+    let direccion = this.url_ + "/minmax";
+    return this.http.post<TempMinMax[]>(direccion,data);
+  }
 }

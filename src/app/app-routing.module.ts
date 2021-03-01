@@ -12,7 +12,11 @@ import { OsatletacouchComponent } from './vistas/osatletacouch/osatletacouch.com
 import { DashatletacouchComponent } from './vistas/dashatletacouch/dashatletacouch.component';
 import { RitmocouchComponent } from './vistas/ritmocouch/ritmocouch.component';
 import { TemperaturacouchComponent } from './vistas/temperaturacouch/temperaturacouch.component';
-import { OxigenocouchComponent } from './vistas/oxigenocouch/oxigenocouch.component'
+import { OxigenocouchComponent } from './vistas/oxigenocouch/oxigenocouch.component';
+import { RcComponent } from './vistas/rc/rc.component';
+import { TcComponent } from './vistas/tc/tc.component';
+import { OsComponent } from './vistas/os/os.component';
+import { PerfilComponent } from './vistas/perfil/perfil.component';
 
 const routes: Routes = [
   { path:'', redirectTo:'login', pathMatch:'full' },
@@ -28,7 +32,11 @@ const routes: Routes = [
   { path:'dashatletacouch', component:DashatletacouchComponent },
   { path:'ritmocouch', component:RitmocouchComponent },
   { path:'temperaturacouch', component:TemperaturacouchComponent },
-  { path:'oxigenocouch', component:OxigenocouchComponent }
+  { path:'oxigenocouch', component:OxigenocouchComponent },
+  { path:'rc', component:RcComponent },
+  { path:'tc', component:TcComponent },
+  { path:'os', component:OsComponent },
+  { path:'perfil', component:PerfilComponent }
 ];
 
 @NgModule({
@@ -36,4 +44,4 @@ const routes: Routes = [
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
-export const routingComponents = [LoginComponent,DashboardComponent,DashboardcouchComponent,MiperfilComponent,AtletasComponent,MisatletasComponent,RcatletacouchComponent,TcatletacouchComponent,OsatletacouchComponent,DashatletacouchComponent,RitmocouchComponent,TemperaturacouchComponent,OxigenocouchComponent]
+export const routingComponents = [LoginComponent,DashboardComponent,DashboardcouchComponent,MiperfilComponent,AtletasComponent,MisatletasComponent,RcatletacouchComponent,TcatletacouchComponent,OsatletacouchComponent,DashatletacouchComponent,RitmocouchComponent,TemperaturacouchComponent,OxigenocouchComponent,RcComponent,TcComponent,OsComponent,PerfilComponent]

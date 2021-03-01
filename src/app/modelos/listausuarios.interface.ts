@@ -90,3 +90,18 @@ export interface histo{
     valor:any;
     fecha:any;
 }
+
+export interface resgistro{
+    username:any;
+    nombre:any;
+    apellido:any;
+    password:any;
+    fecha_nac:any;
+    es_couch:any;
+    edad:any;
+    sexo:any;
+    peso:any;
+    estatura:any;
+    direccion:any;
+    telefono:any;
+}

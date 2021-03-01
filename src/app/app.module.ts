@@ -23,6 +23,10 @@ import { DashatletacouchComponent } from './vistas/dashatletacouch/dashatletacou
 import { RitmocouchComponent } from './vistas/ritmocouch/ritmocouch.component';
 import { TemperaturacouchComponent } from './vistas/temperaturacouch/temperaturacouch.component';
 import { OxigenocouchComponent } from './vistas/oxigenocouch/oxigenocouch.component';
+import { RcComponent } from './vistas/rc/rc.component';
+import { TcComponent } from './vistas/tc/tc.component';
+import { OsComponent } from './vistas/os/os.component';
+import { PerfilComponent } from './vistas/perfil/perfil.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +44,11 @@ import { OxigenocouchComponent } from './vistas/oxigenocouch/oxigenocouch.compon
     DashatletacouchComponent,
     RitmocouchComponent,
     TemperaturacouchComponent,
-    OxigenocouchComponent
+    OxigenocouchComponent,
+    RcComponent,
+    TcComponent,
+    OsComponent,
+    PerfilComponent
   ],
   imports: [
     BrowserModule,

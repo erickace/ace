@@ -221,6 +221,50 @@ export class LoginComponent implements OnInit {
       }
   }
 
+  nombre:any = "";
+  apellido:any = "";
+  fecha:any = "";
+  username:any = "";
+  password:any = "";
+  couching:any = "";
+  edad:any = "";
+  sexo:any = "";
+  peso:any = "";
+  estatura:any = "";
+  direccion:any = "";
+  telefono:any = "";
+  registrar(){
+    this.username = (<HTMLInputElement>document.getElementById("username")).value;
+    this.nombre = (<HTMLInputElement>document.getElementById("nombre")).value;
+    this.apellido = (<HTMLInputElement>document.getElementById("apellido")).value;
+    this.password = (<HTMLInputElement>document.getElementById("password")).value;
+    this.fecha = (<HTMLInputElement>document.getElementById("fecha")).value;
+    this.couching = (<HTMLInputElement>document.getElementById("couching")).value;
+    this.edad = 25;
+    this.sexo = (<HTMLInputElement>document.getElementById("genero")).value;
+    this.peso = 0;
+    this.estatura = 0;
+    this.direccion = 0;
+    this.telefono = 0;
+
+    const objectVar__ = {
+      username: this.username,
+      nombre: this.nombre,
+      apellido: this.apellido,
+      password: this.password,
+      fecha_nac: this.fecha,
+      es_couch: this.couching,
+      edad: this.edad,
+      sexo: this.sexo,
+      peso: this.peso,
+      estatura: this.estatura,
+      direccion: this.direccion,
+      telefono: this.telefono
+    };
+    this.api.registroDeUsers(objectVar__).subscribe(data => {
+      alert("Usuario registrado correctamente!.");
+    });
+  }
   /*onEntrar(){
     localStorage.setItem("username","erickace");
     localStorage.setItem("es_entrenador","1");

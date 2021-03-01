@@ -8,3 +8,7 @@
     margin: 0 auto;
 }*/
 
+#canvas {
+    height: 400px !important;
+    /*width: 75% !important;*/
+}

@@ -204,6 +204,8 @@ export class MisatletasComponent implements OnDestroy, OnInit {
   onCerrarSesion(){
     localStorage.removeItem('username');
     localStorage.removeItem('es_entrenador');
+    localStorage.removeItem('idAtleta');
+    localStorage.removeItem('idCouch');
     this.router.navigate(['login']);
   }
 
@@ -275,6 +277,11 @@ export class MisatletasComponent implements OnDestroy, OnInit {
   onIrOS(id:string){
     localStorage.setItem("idAtleta",id);
     this.router.navigate(['osatletacouch']);
+  }
+
+  onIrDASHA(id:string){
+    localStorage.setItem("idAtleta",id);
+    this.router.navigate(['dashatletacouch']);
   }
 
 }

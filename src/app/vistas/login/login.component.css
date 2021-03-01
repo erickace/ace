@@ -425,6 +425,15 @@ form.sign-in-form {
   font-family: 'Poppins', sans-serif;
 }
 
+#couching{
+  background-color: unset; 
+  border: 0;
+  font-size: 1.1rem; 
+  color:#acacac; 
+  font-weight: 600; 
+  font-family: 'Poppins', sans-serif;
+}
+
 #apellido{
   width: 40%;
 }

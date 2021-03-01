@@ -82,6 +82,8 @@ export class MiperfilComponent implements OnInit {
   onCerrarSesion(){
     localStorage.removeItem('username');
     localStorage.removeItem('es_entrenador');
+    localStorage.removeItem('idAtleta');
+    localStorage.removeItem('idCouch');
     this.router.navigate(['login']);
   }
 

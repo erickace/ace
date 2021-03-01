@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../servicios/api/api.service'
 import { ListaUsuariosII, ListaUsuariosIII, infoAtleta, enviarDataRC } from '../../modelos/listausuarios.interface';
-import { ResponseI, ResponseII, ResponseDataRC } from '../../modelos/response.interface';
+import { ResponseI, ResponseII, ResponseDataRC, TempMinMax } from '../../modelos/response.interface';
 import { InfoUser, InfoUserCaracterisitica } from '../../modelos/response.interface';
 
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { Chart } from 'chart.js';
 })
 export class TcatletacouchComponent implements OnInit {
 
+  minMaxTemp: TempMinMax[] = [];
   iUser: InfoUser[] = [];
   iAtleta: infoAtleta[] = [];
   iUserCaracteristica: InfoUserCaracterisitica[] = [];
@@ -38,17 +39,136 @@ export class TcatletacouchComponent implements OnInit {
   conteo: string = "";
   d: number = 0;
   datos: ResponseDataRC[] = [];
+  histoUser: ResponseDataRC[] = [];
   contador: number = 0;
   comon: number = 0;
   fecha: any = "";
+  valoractual: any = "";
+  primedioTC: any = "";
+  minimo: any = "";
+  maximo: any = "";
+  contador2: number = 0;
 
   constructor(private api: ApiService, private router: Router) { }
 
   ngOnInit(): void {
-    const currentIdAtleta = Number(localStorage.getItem('idAtleta'));
+    this.config.data.labels.pop();
+    this.config.data.datasets.forEach(function (dataset: any) {
+      dataset.data.pop();
+    });
+    const currentIdAtleta = Number(localStorage.getItem('idCouch'));
     this.onDarInfo(currentIdAtleta);
     this.checkLocalStorage();
     this.siFunciona();
+  }
+
+  siFunciona() {
+    var datoentero = 0;
+    //this.enviaData();
+    const objectVar_ = {
+      id_usuario: localStorage.getItem('idAtleta'),
+      id_medicion: 3
+    };
+
+    if (this.contador2 < 2) {
+      var myLineChart1 = new Chart('graficaHistorial', this.config1);
+      this.api.historialUnico(objectVar_).subscribe(data => {
+        this.histoUser = data;
+        var fechas: any = [];
+        var valores: any = [];
+        var colores: any = [];
+        var temperaturacorporal: number = 1;
+        for (var i = 0; i < this.histoUser.length; i++) {
+          //console.log(this.histo[i].fecha.split('T',1)[0] + " " + this.histo[i].fecha.split('T',2)[1].split('.',1)[0]);
+          fechas.push(this.histoUser[i].fecha.split('T', 1)[0] + " " + this.histoUser[i].fecha.split('T', 2)[1].split('.', 1)[0]);
+          valores.push(this.histoUser[i].valor);
+          colores.push();
+          if (temperaturacorporal == 25) {
+            break;
+          }
+          temperaturacorporal++;
+        }
+        if (this.config1.data.datasets.length > 0) {
+          this.config1.data.labels.pop();
+          this.config1.data.datasets.forEach(function (dataset: any) {
+            dataset.data.pop();
+          });
+          myLineChart1.update();
+          this.config1.data.backgroundColor = colores;
+          this.config1.data.labels = fechas; // labels de la grafica
+          this.config1.data.datasets.forEach(function (dataset: any) {
+            dataset.data = valores; // temperatura corporal
+          });
+          myLineChart1.update();
+        }
+      });
+    }
+
+
+    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    var randomScalingFactor = function () {
+      return Math.round(Math.random() * 100);
+    };
+    var myLineChart = new Chart('canvas', this.config);
+    myLineChart.update();
+    let miarray: number[] = [];
+    var data1: any[] = [];
+    var data_: number[] = [];
+    var name: any = [];
+    var marks: any = [];
+    var ultimoValor: any = 0;
+    this.api.rcGET(objectVar_).subscribe(data => {
+      this.datos = data;
+      this.comon = this.datos[0].valor;;
+      ultimoValor = this.datos[0].valor;;
+      const container = document.querySelector(".container");
+      if (this.config.data.datasets.length > 0) {
+        var month = MONTHS[this.config.data.labels.length % MONTHS.length];
+        if (this.contador > 59) {
+          this.config.data.labels.push(this.contador);
+        }
+        this.config.data.datasets.forEach(function (dataset: any) {
+          datoentero = datoentero + 1;
+          dataset.data.push(ultimoValor);
+        });
+        myLineChart.update();
+      }
+      if (this.contador2 < 2) {
+        this.api.promedio(objectVar_).subscribe(data => {
+          var JSONArray = JSON.parse(JSON.stringify(data));
+          let dataResponse: ResponseI = JSONArray[0];
+          let dataResponseI: ResponseII = JSON.parse(dataResponse.consulta);
+          this.primedioTC = Number(dataResponseI.message).toFixed(2);
+          this.api.minmax(Number(localStorage.getItem('idAtleta'))).subscribe(data => {
+            this.minMaxTemp = data;
+            this.minimo = this.minMaxTemp[0].MINIMO;
+            this.maximo = this.minMaxTemp[0].MAXIMO;
+          });
+        });
+      }
+      this.contador += datoentero;
+      this.contador2 += datoentero;
+    });
+
+    //console.log(this.contador);
+    if (this.contador > 59) {
+      this.config.data.labels.shift();
+      this.config.data.datasets.forEach(function (dataset: any) {
+        dataset.data.shift();
+      });
+      myLineChart.update();
+    }
+
+    if (this.contador2 == 10) {
+      this.contador2 = 0;
+    }
+
+    var d = new Date();
+    this.fecha = d;
+    setTimeout(() => {
+      this.siFunciona()
+    }, 1000);
   }
 
   config: any = {
@@ -111,6 +231,120 @@ export class TcatletacouchComponent implements OnInit {
     }
   };
 
+  config1: any = {
+    type: 'bar',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Temperatura corporal',
+        backgroundColor: [
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderColor: [
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        data: [
+
+        ]
+      }]
+    },
+    options: {
+      animation: {
+        duration: 15,
+        easing: 'easeInQuad'
+      },
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Temperatura corporal'
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: false,
+      },
+      hover: {
+        mode: 'nearest',
+        intersect: true
+      },
+      scales: {
+        xAxes: [{
+          stacked: true,
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Fecha'
+          }
+        }],
+        yAxes: [{
+          stacked: true,
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: '°C'
+          }
+        }]
+      }
+    }
+  };
+
   enviaData() {
     const objectVar = {
       id_usuario: localStorage.getItem('idAtleta'),
@@ -121,69 +355,25 @@ export class TcatletacouchComponent implements OnInit {
     });
   }
 
-  siFunciona() {
-    var datoentero = 0;
-    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-    var randomScalingFactor = function () {
-      return Math.round(Math.random() * 100);
-    };
-    var myLineChart = new Chart('canvas', this.config);
-
-    //this.enviaData();
-
-    const objectVar_ = {
-      id_usuario: localStorage.getItem('idAtleta'),
-      id_medicion: 3
-    };
-
-    let miarray: number[] = [];
-    var data1: any[] = [];
-    var data_: number[] = [];
-    var name: any = [];
-    var marks: any = [];
-    var ultimoValor: any = 0;
-    this.api.rcGET(objectVar_).subscribe(data => {
-      this.datos = data;
-      this.comon = this.datos[0].valor;;
-      ultimoValor = this.datos[0].valor;;
-      const container = document.querySelector(".container");
-      if (this.config.data.datasets.length > 0) {
-        var month = MONTHS[this.config.data.labels.length % MONTHS.length];
-        if (this.contador > 59) {
-          this.config.data.labels.push(this.contador);
-        }
-        this.config.data.datasets.forEach(function (dataset: any) {
-          datoentero = datoentero + 1;
-          dataset.data.push(ultimoValor);
-        });
-        myLineChart.update();
-      }
-      this.contador += datoentero;
-    });
-
-    //console.log(this.contador);
-    if (this.contador > 59) {
-      this.config.data.labels.shift();
-      this.config.data.datasets.forEach(function (dataset: any) {
-        dataset.data.shift();
-      });
-      myLineChart.update();
-    }
-    var d = new Date();
-    this.fecha = d;
-    setTimeout(() => {
-      this.siFunciona()
-    }, 1000);
-  }
-
   checkLocalStorage() {
-    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "1" && localStorage.getItem('idAtleta') != null) { // es couch
+    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "1") { // es couch
       this.router.navigate(['tcatletacouch']);
       this.onInfoPerfil();
+      this.onInfoPerfilAtleta();
     } else {
       this.router.navigate(['login']);
     }
+  }
+
+  infoAtletaAux: infoAtleta[] = [];
+  nombreDashAt: any = "";
+  onInfoPerfilAtleta() {
+    this.api.getAllInfoUser(Number(localStorage.getItem('idAtleta'))).subscribe(data => {
+      this.infoAtletaAux = data;
+      if (this.infoAtletaAux.length > 0) {
+        this.nombreDashAt = this.infoAtletaAux[0].nombre.split(" ", 1) + " " + this.infoAtletaAux[0].apellido.split(" ", 1);
+      }
+    });
   }
 
   onInfoPerfil() {
@@ -323,6 +513,8 @@ export class TcatletacouchComponent implements OnInit {
   onCerrarSesion() {
     localStorage.removeItem('username');
     localStorage.removeItem('es_entrenador');
+    localStorage.removeItem('idAtleta');
+    localStorage.removeItem('idCouch');
     this.router.navigate(['login']);
   }
 

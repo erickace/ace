@@ -41,7 +41,7 @@
                       <h2 class="title">Regístrate</h2>
                       <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <input type="text" placeholder="Nombre de usuario" required="true" />
+                        <input type="text" placeholder="Nombre de usuario" required="true"  id="username"/>
                       </div>
                       <div class="input-field" id="dif" >
                         <i class="fas fa-address-card" id="address-card" ></i>
@@ -52,19 +52,24 @@
                         <i class="fas fa-calendar"></i>
                         <input type="date" placeholder="Fecha de Nacimiento" id="fecha" required="true" />
                       </div>
-                      <div class="input-field">
-                        <i class="fas fa-venus-mars"></i>
+                      <div class="input-field" style="display: flex;">
+                        <i class="fas fa-venus-mars" style="width: 15%;"></i>
                         <select name="genero" id="genero" required="true">
                           <option value="Genero" > Genero</option>
                           <option value="Masculino">Masculino</option>
                           <option value="Femenino">Femenino</option>
                         </select>
+                        <select name="couching" id="couching" required="true">
+                          <option value="escouch" > Ocupación</option>
+                          <option value="0">Atleta</option>
+                          <option value="1">Couch</option>
+                        </select>
                       </div>
                       <div class="input-field">
                         <i class="fas fa-lock"></i>
-                        <input type="password" placeholder="Contraseña" required="true" />
+                        <input type="password" placeholder="Contraseña" required="true" id="password"/>
                       </div>
-                      <input type="submit" class="btn" value="Regístrate" />
+                      <input type="submit" class="btn" value="Regístrate"  (click)="registrar()"/>
                     </form>
                 </div>
             </div>

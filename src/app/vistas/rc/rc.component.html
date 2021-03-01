@@ -128,10 +128,10 @@
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
             <!-- User image -->
             <li class="user-header bg-primary">
-              <img src="assets/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+              <img src="assets/img/user1-128x128.jpg" class="img-circle elevation-2" alt="User Image">
 
               <p>
-                {{ nombreDash }} - Couch
+                {{ nombreDash }} - Atleta
                 <small>Miembro desde {{ mes }} de {{ anio }}</small>
               </p>
             </li>
@@ -172,7 +172,7 @@
       <a href="index3.html" class="brand-link">
         <img src="assets/img/AdminLTELogo.png" alt="AdminAce Logo" class="brand-image img-circle elevation-3"
           style="opacity: .8">
-        <span class="brand-text font-weight-light">Ace Couch</span>
+        <span class="brand-text font-weight-light">Ace Atleta</span>
       </a>
 
       <!-- Sidebar -->
@@ -180,7 +180,7 @@
         <!-- Sidebar user panel (optional) -->
         <div class="user-panel mt-3 pb-3 mb-3 d-flex">
           <div class="image">
-            <img src="assets/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
+            <img src="assets/img/user1-128x128.jpg" class="img-circle elevation-2" alt="User Image">
           </div>
           <div class="info">
             <a href="#" class="d-block">{{ nombreDash }}</a>
@@ -189,35 +189,40 @@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-          <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <!-- Add icons to the links using the .nav-icon class
-                 with font-awesome or any other icon font library -->
-            <li class="nav-item">
-              <a href="" (click)="onDashboard()" class="nav-link">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
-                <p>
-                  Dashboard
-                </p>
-              </a>
-            </li>
-            <li class="nav-header">A MI CARGO</li>
-            <li class="nav-item">
-              <a href="javascript:void(0)" (click)="onMisAtletas()" class="nav-link active">
-                <i class="nav-icon fas fa-dumbbell"></i>
-                <p>
-                  Mis atletas
-                  <span class="badge badge-info right">{{ conteo }}</span>
-                </p>
-              </a>
-            </li>
-            <li class="nav-header">ADMINISTRACIÓN</li>
-            <li class="nav-item">
-              <a href="javascript:void(0)" (click)="onAtletas()" class="nav-link">
-                <i class="nav-icon fas fa-running"></i>
-                <p>Atletas</p>
-              </a>
-            </li>
-          </ul>
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                <!-- Add icons to the links using the .nav-icon class
+                     with font-awesome or any other icon font library -->
+                <li class="nav-item">
+                  <a href="javascript:void(0)" (click)="onDashboard()" class="nav-link">
+                    <i class="nav-icon fas fa-tachometer-alt"></i>
+                    <p>
+                      Dashboard
+                    </p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="javascript:void(0)" (click)="onRitmoCardiaco()" class="nav-link active">
+                    <i class="nav-icon fa fa-heartbeat" aria-hidden="true"></i>
+                    <p>
+                      Ritmo Cardiaco
+                      <span class="badge badge-info right">{{ conteo }}</span>
+                    </p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="javascript:void(0)" (click)="onTemperaturaCorporal()" class="nav-link">
+                    <i class="nav-icon fas fa-thermometer-three-quarters"></i>
+                    <p>Temperatura Corporal</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                    <a href="javascript:void(0)" (click)="onOsigenoSangre()" class="nav-link">
+                      
+                      <i class="nav-icon ion ion-ios-analytics"></i>
+                      <p>Oxigeno en la Sangre</p>
+                    </a>
+                  </li>
+              </ul>
         </nav>
         <!-- /.sidebar-menu -->
       </div>
@@ -231,7 +236,7 @@
         <div class="container-fluid">
           <div class="row mb-2">
             <div class="col-sm-6">
-              <h1>Ritmo Cardiaco del atleta <span style="font-weight: bold;">{{nombreDashAt}}</span></h1>
+              <h1>Ritmo Cardiaco</h1>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-right">
@@ -258,7 +263,7 @@
                   </h3>
 
                   <div class="card-tools">
-                    Couch: {{ username }} | Valor actual: {{ comon }} bpm | Valor promedio: {{primedioRC}} bpm
+                    Atleta: {{ username }} | Valor actual: {{ comon }} bpm | Valor promedio: {{primedioRC}} bpm
                   </div>
                 </div>
                 <div class="card-body">

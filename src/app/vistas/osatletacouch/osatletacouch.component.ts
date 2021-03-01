@@ -38,106 +38,92 @@ export class OsatletacouchComponent implements OnInit {
   conteo: string = "";
   d: number = 0;
   datos: ResponseDataRC[] = [];
-  contador: number = 1;
+  contador: number = 0;
+  contador2: number = 0;
   comon: number = 0;
   fecha: any = "";
+  histoUser: ResponseDataRC[] = [];
+  primedioOS: any = "";
 
   constructor(private api: ApiService, private router: Router) { }
 
   ngOnInit(): void {
-    const currentIdAtleta = Number(localStorage.getItem('idAtleta'));
+    this.config.data.labels.pop();
+    this.config.data.datasets.forEach(function (dataset: any) {
+      dataset.data.pop();
+    });
+    const currentIdAtleta = Number(localStorage.getItem('idCouch'));
     this.onDarInfo(currentIdAtleta);
     this.checkLocalStorage();
     this.siFunciona();
   }
 
-  config: any = {
-    type: 'line',
-    data: {
-      labels: [],
-      datasets: [{
-        label: '',
-        backgroundColor: [
-          'rgba(79, 102, 88, 0.15)',
-          'rgba(79, 102, 88, 0.15)',
-          'rgba(79, 102, 88, 0.15)',
-          'rgba(79, 102, 88, 0.15)',
-          'rgba(79, 102, 88, 0.15)',
-          'rgba(79, 102, 88, 0.15)'
-        ],
-        borderColor: [
-          'rgba(79, 102, 88, 0.15)'
-        ],
-        data: [
-
-        ],
-        fill: true,
-        pointRadius: 10,
-        pointHoverRadius: 15,
-        borderDash: [5, 5]
-      }]
-    },
-    options: {
-      animation: {
-        duration: 15
-      },
-      responsive: true,
-      title: {
-        display: true,
-        text: 'Oxigeno en la Sangre'
-      },
-      tooltips: {
-        mode: 'index',
-        intersect: false,
-      },
-      hover: {
-        mode: 'nearest',
-        intersect: true
-      },
-      scales: {
-        xAxes: [{
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Segundos'
-          }
-        }],
-        yAxes: [{
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'SpO2'
-          }
-        }]
-      }
+  checkLocalStorage() {
+    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "1") { // es couch
+      this.router.navigate(['osatletacouch']);
+      this.onInfoPerfil();
+      this.onInfoPerfilAtleta();
+    } else {
+      this.router.navigate(['login']);
     }
-  };
+  }
 
-  enviaData() {
-    const objectVar = {
-      id_usuario: localStorage.getItem('idAtleta'),
-      id_medicion: 1,
-      valor: Math.random() * (100 - 90) + 90
-    };
-    this.api.rc(objectVar).subscribe(data => {
+  infoAtletaAux: infoAtleta[] = [];
+  nombreDashAt: any = "";
+  onInfoPerfilAtleta() {
+    this.api.getAllInfoUser(Number(localStorage.getItem('idAtleta'))).subscribe(data => {
+      this.infoAtletaAux = data;
+      if (this.infoAtletaAux.length > 0) {
+        this.nombreDashAt = this.infoAtletaAux[0].nombre.split(" ", 1) + " " + this.infoAtletaAux[0].apellido.split(" ", 1);
+      }
     });
   }
 
   siFunciona() {
     var datoentero = 0;
+    //this.enviaData();
+    const objectVar_ = {
+      id_usuario: localStorage.getItem('idAtleta'),
+      id_medicion: 1
+    };
+
+    if (this.contador2 < 2) {
+      var myLineChart1 = new Chart('graficaHistorial', this.config1);
+      this.api.historialUnico(objectVar_).subscribe(data => {
+        this.histoUser = data;
+        var fechas: any = [];
+        var valores: any = [];
+        var ritmocardiaco: number = 1;
+        for (var i = 0; i < this.histoUser.length; i++) {
+          fechas.push(this.histoUser[i].fecha.split('T', 1)[0] + " " + this.histoUser[i].fecha.split('T', 2)[1].split('.', 1)[0]);
+          valores.push(this.histoUser[i].valor);
+          if (ritmocardiaco == 25) {
+            break;
+          }
+          ritmocardiaco++;
+        }
+        if (this.config1.data.datasets.length > 0) {
+          this.config1.data.labels.pop();
+          this.config1.data.datasets.forEach(function (dataset: any) {
+            dataset.data.pop();
+          });
+          myLineChart1.update();
+          this.config1.data.labels = fechas; // labels de la grafica
+          this.config1.data.datasets.forEach(function (dataset: any) {
+            dataset.data = valores; // temperatura corporal
+          });
+          myLineChart1.update();
+        }
+      });
+    }
+
     var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
     var randomScalingFactor = function () {
       return Math.round(Math.random() * 100);
     };
     var myLineChart = new Chart('canvas', this.config);
-
-    //this.enviaData();
-
-    const objectVar_ = {
-      id_usuario: localStorage.getItem('idAtleta'),
-      id_medicion: 1
-    };
+    myLineChart.update();
 
     let miarray: number[] = [];
     var data1: any[] = [];
@@ -153,13 +139,21 @@ export class OsatletacouchComponent implements OnInit {
       if (this.config.data.datasets.length > 0) {
         var month = MONTHS[this.config.data.labels.length % MONTHS.length];
         //if (this.contador > 59) {
-          this.config.data.labels.push(this.contador);
+        this.config.data.labels.push(this.contador);
         //}
         this.config.data.datasets.forEach(function (dataset: any) {
           datoentero = datoentero + 1;
           dataset.data.push(ultimoValor);
         });
         myLineChart.update();
+      }
+      if (this.contador2 < 2) {
+        this.api.promedio(objectVar_).subscribe(data => {
+          var JSONArray = JSON.parse(JSON.stringify(data));
+          let dataResponse: ResponseI = JSONArray[0];
+          let dataResponseI: ResponseII = JSON.parse(dataResponse.consulta);
+          this.primedioOS = Number(dataResponseI.message).toFixed(2);
+        });
       }
       this.contador += datoentero;
     });
@@ -172,20 +166,16 @@ export class OsatletacouchComponent implements OnInit {
       });
       myLineChart.update();
     }
+
+    if (this.contador2 == 10) {
+      this.contador2 = 0;
+    }
+
     var d = new Date();
     this.fecha = d;
     setTimeout(() => {
       this.siFunciona()
     }, 1000);
-  }
-
-  checkLocalStorage() {
-    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "1" && localStorage.getItem('idAtleta') != null) { // es couch
-      this.router.navigate(['osatletacouch']);
-      this.onInfoPerfil();
-    } else {
-      this.router.navigate(['login']);
-    }
   }
 
   onInfoPerfil() {
@@ -269,6 +259,182 @@ export class OsatletacouchComponent implements OnInit {
     });
   }
 
+  config: any = {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: '',
+        backgroundColor: [
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)'
+        ],
+        borderColor: [
+          'rgba(79, 102, 88, 0.15)'
+        ],
+        data: [
+
+        ],
+        fill: true,
+        pointRadius: 10,
+        pointHoverRadius: 15,
+        borderDash: [5, 5]
+      }]
+    },
+    options: {
+      animation: {
+        duration: 15
+      },
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Oxigeno en la Sangre'
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: false,
+      },
+      hover: {
+        mode: 'nearest',
+        intersect: true
+      },
+      scales: {
+        xAxes: [{
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Segundos'
+          }
+        }],
+        yAxes: [{
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'SpO2'
+          }
+        }]
+      }
+    }
+  };
+
+  enviaData() {
+    const objectVar = {
+      id_usuario: localStorage.getItem('idAtleta'),
+      id_medicion: 1,
+      valor: Math.random() * (100 - 90) + 90
+    };
+    this.api.rc(objectVar).subscribe(data => {
+    });
+  }
+
+  config1: any = {
+    type: 'bar',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Temperatura corporal',
+        backgroundColor: [
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)'
+        ],
+        borderColor: [
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)'
+        ],
+        data: [
+
+        ]
+      }]
+    },
+    options: {
+      animation: {
+        duration: 15,
+        easing: 'easeInQuad'
+      },
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Ritmo cardiaco'
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: false,
+      },
+      hover: {
+        mode: 'nearest',
+        intersect: true
+      },
+      scales: {
+        xAxes: [{
+          stacked: true,
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Fecha'
+          }
+        }],
+        yAxes: [{
+          stacked: true,
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'SpO2'
+          }
+        }]
+      }
+    }
+  };
+
   // traigo la info del atleta al cual el couch revisa
   nombreUA: string = "";
   usernameUA: string = "";
@@ -325,10 +491,13 @@ export class OsatletacouchComponent implements OnInit {
   onCerrarSesion() {
     localStorage.removeItem('username');
     localStorage.removeItem('es_entrenador');
+    localStorage.removeItem('idAtleta');
+    localStorage.removeItem('idCouch');
     this.router.navigate(['login']);
   }
 
   onContacto() {
 
   }
+
 }

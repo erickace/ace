@@ -75,3 +75,10 @@ export interface ResponseDataRC {
     valor:any;
     fecha:any;
 }
+
+export interface TempMinMax {
+    id_usuario:any;
+    id_medicion:any;
+    MINIMO:any;
+    MAXIMO:any;
+}

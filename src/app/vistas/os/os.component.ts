@@ -10,11 +10,11 @@ import Swal from 'sweetalert2';
 import { Chart } from 'chart.js';
 
 @Component({
-  selector: 'app-ritmocouch',
-  templateUrl: './ritmocouch.component.html',
-  styleUrls: ['./ritmocouch.component.css']
+  selector: 'app-os',
+  templateUrl: './os.component.html',
+  styleUrls: ['./os.component.css']
 })
-export class RitmocouchComponent implements OnInit {
+export class OsComponent implements OnInit {
 
   iUser: InfoUser[] = [];
   iAtleta: infoAtleta[] = [];
@@ -43,7 +43,7 @@ export class RitmocouchComponent implements OnInit {
   comon: number = 0;
   fecha: any = "";
   histoUser: ResponseDataRC[] = [];
-  primedioRC: any = "";
+  primedioOS: any = "";
 
   constructor(private api: ApiService, private router: Router) { }
 
@@ -52,193 +52,27 @@ export class RitmocouchComponent implements OnInit {
     this.config.data.datasets.forEach(function (dataset: any) {
       dataset.data.pop();
     });
-    const currentIdAtleta = Number(localStorage.getItem('idCouch'));
+    const currentIdAtleta = Number(localStorage.getItem('idAtleta'));
     this.onDarInfo(currentIdAtleta);
     this.checkLocalStorage();
     this.siFunciona();
   }
 
-  config: any = {
-    type: 'line',
-    data: {
-      labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60],
-      datasets: [{
-        label: '',
-        backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
-          'rgba(75, 192, 192, 0.2)',
-          'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(54, 162, 235, 1)',
-          'rgba(255, 206, 86, 1)',
-          'rgba(75, 192, 192, 1)',
-          'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
-        ],
-        data: [
-
-        ],
-        fill: false,
-      }]
-    },
-    options: {
-      animation: {
-        duration: 0
-      },
-      responsive: true,
-      title: {
-        display: true,
-        text: 'Ritmo Cardiaco'
-      },
-      tooltips: {
-        mode: 'index',
-        intersect: false,
-      },
-      hover: {
-        mode: 'nearest',
-        intersect: true
-      },
-      scales: {
-        xAxes: [{
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Segundos'
-          }
-        }],
-        yAxes: [{
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Latidos'
-          }/*,
-          ticks: {
-            min: 0,
-            max: 100,
-
-            // forces step size to be 5 units
-            stepSize: 5
-          }*/
-        }]
-      }
+  checkLocalStorage() {
+    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "0") { // es couch
+      this.router.navigate(['os']);
+      this.onInfoPerfil();
+    } else {
+      this.router.navigate(['login']);
     }
-  };
-
-  config1: any = {
-    type: 'bar',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'Temperatura corporal',
-        backgroundColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)'
-        ],
-        borderColor: [
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)',
-          'rgba(255, 99, 132, 1)'
-        ],
-        data: [
-
-        ]
-      }]
-    },
-    options: {
-      animation: {
-        duration: 15,
-        easing: 'easeInQuad'
-      },
-      responsive: true,
-      title: {
-        display: true,
-        text: 'Ritmo cardiaco'
-      },
-      tooltips: {
-        mode: 'index',
-        intersect: false,
-      },
-      hover: {
-        mode: 'nearest',
-        intersect: true
-      },
-      scales: {
-        xAxes: [{
-          stacked: true,
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'Fecha'
-          }
-        }],
-        yAxes: [{
-          stacked: true,
-          display: true,
-          scaleLabel: {
-            display: true,
-            labelString: 'bpm'
-          }
-        }]
-      }
-    }
-  };
+  }
 
   siFunciona() {
     var datoentero = 0;
     //this.enviaData();
     const objectVar_ = {
-      id_usuario: localStorage.getItem('idCouch'),
-      id_medicion: 2
+      id_usuario: localStorage.getItem('idAtleta'),
+      id_medicion: 1
     };
 
     if (this.contador2 < 2) {
@@ -276,7 +110,6 @@ export class RitmocouchComponent implements OnInit {
     var randomScalingFactor = function () {
       return Math.round(Math.random() * 100);
     };
-
     var myLineChart = new Chart('canvas', this.config);
     myLineChart.update();
 
@@ -293,15 +126,13 @@ export class RitmocouchComponent implements OnInit {
       const container = document.querySelector(".container");
       if (this.config.data.datasets.length > 0) {
         var month = MONTHS[this.config.data.labels.length % MONTHS.length];
-        if (this.contador > 59) {
-          this.config.data.labels.push(this.contador);
-        }
-
+        //if (this.contador > 59) {
+        this.config.data.labels.push(this.contador);
+        //}
         this.config.data.datasets.forEach(function (dataset: any) {
           datoentero = datoentero + 1;
           dataset.data.push(ultimoValor);
         });
-
         myLineChart.update();
       }
       if (this.contador2 < 2) {
@@ -309,15 +140,13 @@ export class RitmocouchComponent implements OnInit {
           var JSONArray = JSON.parse(JSON.stringify(data));
           let dataResponse: ResponseI = JSONArray[0];
           let dataResponseI: ResponseII = JSON.parse(dataResponse.consulta);
-          this.primedioRC = Number(dataResponseI.message).toFixed(2);
+          this.primedioOS = Number(dataResponseI.message).toFixed(2);
         });
       }
       this.contador += datoentero;
-      this.contador2 += datoentero;
     });
 
-
-    console.log(this.contador);
+    //console.log(this.contador);
     if (this.contador > 59) {
       this.config.data.labels.shift();
       this.config.data.datasets.forEach(function (dataset: any) {
@@ -325,35 +154,16 @@ export class RitmocouchComponent implements OnInit {
       });
       myLineChart.update();
     }
+
     if (this.contador2 == 10) {
       this.contador2 = 0;
     }
+
     var d = new Date();
     this.fecha = d;
     setTimeout(() => {
       this.siFunciona()
     }, 1000);
-  }
-
-  enviaData() {
-    const objectVar = {
-      id_usuario: localStorage.getItem('idCouch'),
-      id_medicion: 2,
-      valor: Math.random() * (100 - 90) + 90
-    };
-
-    this.api.rc(objectVar).subscribe(data => {
-
-    });
-  }
-
-  checkLocalStorage() {
-    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "1") { // es couch
-      this.router.navigate(['ritmocouch']);
-      this.onInfoPerfil();
-    } else {
-      this.router.navigate(['login']);
-    }
   }
 
   onInfoPerfil() {
@@ -437,8 +247,183 @@ export class RitmocouchComponent implements OnInit {
     });
   }
 
+  config: any = {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: '',
+        backgroundColor: [
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)',
+          'rgba(79, 102, 88, 0.15)'
+        ],
+        borderColor: [
+          'rgba(79, 102, 88, 0.15)'
+        ],
+        data: [
 
-  // traigo la info del couch para ser mostrada donde sea de la pagina
+        ],
+        fill: true,
+        pointRadius: 10,
+        pointHoverRadius: 15,
+        borderDash: [5, 5]
+      }]
+    },
+    options: {
+      animation: {
+        duration: 15
+      },
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Oxigeno en la Sangre'
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: false,
+      },
+      hover: {
+        mode: 'nearest',
+        intersect: true
+      },
+      scales: {
+        xAxes: [{
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Segundos'
+          }
+        }],
+        yAxes: [{
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'SpO2'
+          }
+        }]
+      }
+    }
+  };
+
+  enviaData() {
+    const objectVar = {
+      id_usuario: localStorage.getItem('idAtleta'),
+      id_medicion: 1,
+      valor: Math.random() * (100 - 90) + 90
+    };
+    this.api.rc(objectVar).subscribe(data => {
+    });
+  }
+
+  config1: any = {
+    type: 'bar',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'Temperatura corporal',
+        backgroundColor: [
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)'
+        ],
+        borderColor: [
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)',
+          'rgba(79, 102, 88, 1)'
+        ],
+        data: [
+
+        ]
+      }]
+    },
+    options: {
+      animation: {
+        duration: 15,
+        easing: 'easeInQuad'
+      },
+      responsive: true,
+      title: {
+        display: true,
+        text: 'Ritmo cardiaco'
+      },
+      tooltips: {
+        mode: 'index',
+        intersect: false,
+      },
+      hover: {
+        mode: 'nearest',
+        intersect: true
+      },
+      scales: {
+        xAxes: [{
+          stacked: true,
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'Fecha'
+          }
+        }],
+        yAxes: [{
+          stacked: true,
+          display: true,
+          scaleLabel: {
+            display: true,
+            labelString: 'SpO2'
+          }
+        }]
+      }
+    }
+  };
+
+  // traigo la info del atleta al cual el couch revisa
   nombreUA: string = "";
   usernameUA: string = "";
   fecha_nacUA: string = "";
@@ -474,33 +459,35 @@ export class RitmocouchComponent implements OnInit {
     });
   }
 
-  //traslados de paginas
-  onDashboard() {
-    this.router.navigate(['dashboardcouch']);
-  }
+  onContacto() {
 
-  onMisAtletas() {
-    this.router.navigate(['misatletas']);
   }
-
-  onAtletas() {
-    this.router.navigate(['atletas']);
-  }
-
+  
   onMiPerfil() {
-    this.router.navigate(['miperfil']);
+    this.router.navigate(['perfil']);
   }
 
   onCerrarSesion() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('es_entrenador');
     localStorage.removeItem('idAtleta');
-    localStorage.removeItem('idCouch');
+    localStorage.removeItem('es_entrenador');
+    localStorage.removeItem('username');
     this.router.navigate(['login']);
   }
 
-  onContacto() {
+  onDashboard() {
+    this.router.navigate(['dashboard']);
+  }
 
+  onRitmoCardiaco(){
+    this.router.navigate(['rc']);
+  }
+
+  onTemperaturaCorporal(){
+    this.router.navigate(['tc']);
+  }
+
+  onOsigenoSangre(){
+    this.router.navigate(['os']);
   }
 
 }

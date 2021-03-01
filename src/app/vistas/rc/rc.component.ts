@@ -9,12 +9,13 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { Chart } from 'chart.js';
 
+
 @Component({
-  selector: 'app-ritmocouch',
-  templateUrl: './ritmocouch.component.html',
-  styleUrls: ['./ritmocouch.component.css']
+  selector: 'app-rc',
+  templateUrl: './rc.component.html',
+  styleUrls: ['./rc.component.css']
 })
-export class RitmocouchComponent implements OnInit {
+export class RcComponent implements OnInit {
 
   iUser: InfoUser[] = [];
   iAtleta: infoAtleta[] = [];
@@ -52,10 +53,123 @@ export class RitmocouchComponent implements OnInit {
     this.config.data.datasets.forEach(function (dataset: any) {
       dataset.data.pop();
     });
-    const currentIdAtleta = Number(localStorage.getItem('idCouch'));
+    const currentIdAtleta = Number(localStorage.getItem('idAtleta'));
     this.onDarInfo(currentIdAtleta);
     this.checkLocalStorage();
     this.siFunciona();
+  }
+
+  checkLocalStorage() {
+    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "0") { // dashboard atleta
+      this.router.navigate(['rc']);
+      this.onInfoPerfil();
+    } else {
+      this.router.navigate(['login']);
+    }
+  }
+
+  siFunciona() {
+    var datoentero = 0;
+    //this.enviaData();
+    const objectVar_ = {
+      id_usuario: localStorage.getItem('idAtleta'),
+      id_medicion: 2
+    };
+
+    if (this.contador2 < 2) {
+      var myLineChart1 = new Chart('graficaHistorial', this.config1);
+      this.api.historialUnico(objectVar_).subscribe(data => {
+        this.histoUser = data;
+        var fechas: any = [];
+        var valores: any = [];
+        var ritmocardiaco: number = 1;
+        for (var i = 0; i < this.histoUser.length; i++) {
+          fechas.push(this.histoUser[i].fecha.split('T', 1)[0] + " " + this.histoUser[i].fecha.split('T', 2)[1].split('.', 1)[0]);
+          valores.push(this.histoUser[i].valor);
+          if (ritmocardiaco == 25) {
+            break;
+          }
+          ritmocardiaco++;
+        }
+        if (this.config1.data.datasets.length > 0) {
+          this.config1.data.labels.pop();
+          this.config1.data.datasets.forEach(function (dataset: any) {
+            dataset.data.pop();
+          });
+          myLineChart1.update();
+          this.config1.data.labels = fechas; // labels de la grafica
+          this.config1.data.datasets.forEach(function (dataset: any) {
+            dataset.data = valores; // temperatura corporal
+          });
+          myLineChart1.update();
+        }
+      });
+    }
+
+    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    var randomScalingFactor = function () {
+      return Math.round(Math.random() * 100);
+    };
+
+    var myLineChart = new Chart('canvas', this.config);
+    myLineChart.update();
+
+    let miarray: number[] = [];
+    var data1: any[] = [];
+    var data_: number[] = [];
+    var name: any = [];
+    var marks: any = [];
+    var ultimoValor: any = 0;
+    this.api.rcGET(objectVar_).subscribe(data => {
+      this.datos = data;
+      this.comon = this.datos[0].valor;;
+      ultimoValor = this.datos[0].valor;;
+      const container = document.querySelector(".container");
+      if (this.config.data.datasets.length > 0) {
+        var month = MONTHS[this.config.data.labels.length % MONTHS.length];
+        if (this.contador > 59) {
+          this.config.data.labels.push(this.contador);
+        }
+
+        this.config.data.datasets.forEach(function (dataset: any) {
+          datoentero = datoentero + 1;
+          dataset.data.push(ultimoValor);
+        });
+
+        myLineChart.update();
+      }
+      if (this.contador2 < 2) {
+        this.api.promedio(objectVar_).subscribe(data => {
+          var JSONArray = JSON.parse(JSON.stringify(data));
+          let dataResponse: ResponseI = JSONArray[0];
+          let dataResponseI: ResponseII = JSON.parse(dataResponse.consulta);
+          this.primedioRC = Number(dataResponseI.message).toFixed(2);
+        });
+      }
+      this.contador += datoentero;
+      this.contador2 += datoentero;
+    });
+
+
+    console.log(this.contador);
+    if (this.contador > 59) {
+      this.config.data.labels.shift();
+      this.config.data.datasets.forEach(function (dataset: any) {
+        dataset.data.shift();
+      });
+      myLineChart.update();
+    }
+
+    if (this.contador2 == 10) {
+      this.contador2 = 0;
+    }
+
+    var d = new Date();
+    this.fecha = d;
+    setTimeout(() => {
+      this.siFunciona()
+    }, 1000);
   }
 
   config: any = {
@@ -116,14 +230,7 @@ export class RitmocouchComponent implements OnInit {
           scaleLabel: {
             display: true,
             labelString: 'Latidos'
-          }/*,
-          ticks: {
-            min: 0,
-            max: 100,
-
-            // forces step size to be 5 units
-            stepSize: 5
-          }*/
+          }
         }]
       }
     }
@@ -233,127 +340,16 @@ export class RitmocouchComponent implements OnInit {
     }
   };
 
-  siFunciona() {
-    var datoentero = 0;
-    //this.enviaData();
-    const objectVar_ = {
-      id_usuario: localStorage.getItem('idCouch'),
-      id_medicion: 2
-    };
-
-    if (this.contador2 < 2) {
-      var myLineChart1 = new Chart('graficaHistorial', this.config1);
-      this.api.historialUnico(objectVar_).subscribe(data => {
-        this.histoUser = data;
-        var fechas: any = [];
-        var valores: any = [];
-        var ritmocardiaco: number = 1;
-        for (var i = 0; i < this.histoUser.length; i++) {
-          fechas.push(this.histoUser[i].fecha.split('T', 1)[0] + " " + this.histoUser[i].fecha.split('T', 2)[1].split('.', 1)[0]);
-          valores.push(this.histoUser[i].valor);
-          if (ritmocardiaco == 25) {
-            break;
-          }
-          ritmocardiaco++;
-        }
-        if (this.config1.data.datasets.length > 0) {
-          this.config1.data.labels.pop();
-          this.config1.data.datasets.forEach(function (dataset: any) {
-            dataset.data.pop();
-          });
-          myLineChart1.update();
-          this.config1.data.labels = fechas; // labels de la grafica
-          this.config1.data.datasets.forEach(function (dataset: any) {
-            dataset.data = valores; // temperatura corporal
-          });
-          myLineChart1.update();
-        }
-      });
-    }
-
-    var MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
-    var randomScalingFactor = function () {
-      return Math.round(Math.random() * 100);
-    };
-
-    var myLineChart = new Chart('canvas', this.config);
-    myLineChart.update();
-
-    let miarray: number[] = [];
-    var data1: any[] = [];
-    var data_: number[] = [];
-    var name: any = [];
-    var marks: any = [];
-    var ultimoValor: any = 0;
-    this.api.rcGET(objectVar_).subscribe(data => {
-      this.datos = data;
-      this.comon = this.datos[0].valor;;
-      ultimoValor = this.datos[0].valor;;
-      const container = document.querySelector(".container");
-      if (this.config.data.datasets.length > 0) {
-        var month = MONTHS[this.config.data.labels.length % MONTHS.length];
-        if (this.contador > 59) {
-          this.config.data.labels.push(this.contador);
-        }
-
-        this.config.data.datasets.forEach(function (dataset: any) {
-          datoentero = datoentero + 1;
-          dataset.data.push(ultimoValor);
-        });
-
-        myLineChart.update();
-      }
-      if (this.contador2 < 2) {
-        this.api.promedio(objectVar_).subscribe(data => {
-          var JSONArray = JSON.parse(JSON.stringify(data));
-          let dataResponse: ResponseI = JSONArray[0];
-          let dataResponseI: ResponseII = JSON.parse(dataResponse.consulta);
-          this.primedioRC = Number(dataResponseI.message).toFixed(2);
-        });
-      }
-      this.contador += datoentero;
-      this.contador2 += datoentero;
-    });
-
-
-    console.log(this.contador);
-    if (this.contador > 59) {
-      this.config.data.labels.shift();
-      this.config.data.datasets.forEach(function (dataset: any) {
-        dataset.data.shift();
-      });
-      myLineChart.update();
-    }
-    if (this.contador2 == 10) {
-      this.contador2 = 0;
-    }
-    var d = new Date();
-    this.fecha = d;
-    setTimeout(() => {
-      this.siFunciona()
-    }, 1000);
-  }
-
   enviaData() {
     const objectVar = {
-      id_usuario: localStorage.getItem('idCouch'),
+      id_usuario: localStorage.getItem('idAtleta'),
       id_medicion: 2,
-      valor: Math.random() * (100 - 90) + 90
+      valor: Math.random() * (1000 - 600) + 600
     };
 
     this.api.rc(objectVar).subscribe(data => {
 
     });
-  }
-
-  checkLocalStorage() {
-    if (localStorage.getItem('username') && localStorage.getItem('es_entrenador') == "1") { // es couch
-      this.router.navigate(['ritmocouch']);
-      this.onInfoPerfil();
-    } else {
-      this.router.navigate(['login']);
-    }
   }
 
   onInfoPerfil() {
@@ -436,8 +432,6 @@ export class RitmocouchComponent implements OnInit {
       });
     });
   }
-
-
   // traigo la info del couch para ser mostrada donde sea de la pagina
   nombreUA: string = "";
   usernameUA: string = "";
@@ -474,33 +468,35 @@ export class RitmocouchComponent implements OnInit {
     });
   }
 
-  //traslados de paginas
-  onDashboard() {
-    this.router.navigate(['dashboardcouch']);
-  }
-
-  onMisAtletas() {
-    this.router.navigate(['misatletas']);
-  }
-
-  onAtletas() {
-    this.router.navigate(['atletas']);
-  }
-
-  onMiPerfil() {
-    this.router.navigate(['miperfil']);
-  }
-
-  onCerrarSesion() {
-    localStorage.removeItem('username');
-    localStorage.removeItem('es_entrenador');
-    localStorage.removeItem('idAtleta');
-    localStorage.removeItem('idCouch');
-    this.router.navigate(['login']);
-  }
 
   onContacto() {
 
   }
+  
+  onMiPerfil() {
+    this.router.navigate(['perfil']);
+  }
 
+  onCerrarSesion() {
+    localStorage.removeItem('idAtleta');
+    localStorage.removeItem('es_entrenador');
+    localStorage.removeItem('username');
+    this.router.navigate(['login']);
+  }
+
+  onDashboard() {
+    this.router.navigate(['dashboard']);
+  }
+
+  onRitmoCardiaco(){
+    this.router.navigate(['rc']);
+  }
+
+  onTemperaturaCorporal(){
+    this.router.navigate(['tc']);
+  }
+
+  onOsigenoSangre(){
+    this.router.navigate(['os']);
+  }
 }
