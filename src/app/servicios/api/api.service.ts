@@ -207,7 +207,7 @@ export class ApiService {
   }
 
   registroDeUsers(data:resgistro):Observable<TempMinMax[]>{
-    let direccion = this.url_ + "/minmax";
+    let direccion = this.url_ + "/registro";
     return this.http.post<TempMinMax[]>(direccion,data);
   }
 }
